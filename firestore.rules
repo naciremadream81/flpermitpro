@@ -1,0 +1,58 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Default: deny everything not explicitly allowed ──────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ── County reference data (read-only for authenticated users) ───
+    // 67-county records live here; seeded by admin tooling, never
+    // written by the client application.
+    match /artifacts/{appId}/public/data/counties/{countyId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function hasRequiredPermitFields(data) {
+      return data.keys().hasAll(['id', 'status', 'homeType', 'ownerId', 'sharedWith', 'userId']);
+    }
+
+    function isPermitParticipant(data) {
+      return isSignedIn()
+        && (
+          request.auth.uid == data.ownerId
+          || (data.sharedWith is list && data.sharedWith.hasAny([request.auth.uid]))
+        );
+    }
+
+    // ── Shared permit packets (multi-user collaboration) ────────────
+    // Canonical source of truth: `/artifacts/{appId}/permits/{permitId}`
+    // - ownerId: uid of the owner
+    // - sharedWith: list of uids allowed to collaborate
+    // For now, participants can read + write. (Roles can be introduced later.)
+    match /artifacts/{appId}/permits/{permitId} {
+      allow read: if isPermitParticipant(resource.data);
+      allow create: if isSignedIn()
+                    && hasRequiredPermitFields(request.resource.data)
+                    && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isSignedIn()
+                    && hasRequiredPermitFields(request.resource.data)
+                    && isPermitParticipant(resource.data);
+      allow delete: if isSignedIn()
+                    && resource.data.ownerId == request.auth.uid;
+    }
+
+    // ── Legacy per-user permit packets (deprecated) ─────────────────
+    // Kept for backward compatibility during migration.
+    match /artifacts/{appId}/users/{userId}/permits/{permitId} {
+      allow read, write: if false;
+    }
+  }
+}

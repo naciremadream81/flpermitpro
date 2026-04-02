@@ -1,0 +1,1 @@
+Replace "your-project-id" in .firebaserc with your Firebase project ID from the Firebase console before running firebase deploy or npm run deploy.

@@ -1,0 +1,19 @@
+{
+  "plugins": {
+    "firebase": {
+      "enabled": true
+    },
+    "firecrawl": {
+      "enabled": true
+    },
+    "continual-learning": {
+      "enabled": true
+    },
+    "agent-compatibility": {
+      "enabled": true
+    },
+    "cli-for-agent": {
+      "enabled": true
+    }
+  }
+}
