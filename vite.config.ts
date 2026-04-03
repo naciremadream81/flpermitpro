@@ -17,7 +17,12 @@ export default defineConfig({
           VitePWA({
             registerType: 'autoUpdate',
             injectRegister: 'auto',
-            workbox: { globPatterns: ['**/*.{js,css,html,svg,json}'] },
+            devOptions: { enabled: false },
+            workbox: {
+              // Include font assets (e.g. KaTeX) so the SW precaches them; omitting them can cause
+              // broken font requests when offline or with aggressive caching.
+              globPatterns: ['**/*.{js,css,html,svg,json,woff2,woff,ttf,mjs}'],
+            },
             includeAssets: ['favicon.svg'],
             manifest: false,
           }),

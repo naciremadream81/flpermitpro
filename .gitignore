@@ -27,6 +27,11 @@ dist-electron/
 release/
 .env
 .env.local
+
+# Firebase Admin service account keys (never commit)
+secrets/
+*-firebase-adminsdk-*.json
+serviceAccount*.json
 android/
 ios/
 

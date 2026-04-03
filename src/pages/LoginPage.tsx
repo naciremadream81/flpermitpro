@@ -25,6 +25,7 @@ function friendlyFirebaseError(code: string): string {
     case 'auth/invalid-credential':
     case 'auth/wrong-password':
     case 'auth/user-not-found':
+    case 'auth/invalid-login-credentials':
       return 'Invalid email or password. Please try again.';
     case 'auth/user-disabled':
       return 'This account has been disabled. Contact support.';
@@ -34,6 +35,10 @@ function friendlyFirebaseError(code: string): string {
       return 'Network error. Check your internet connection.';
     case 'auth/invalid-email':
       return 'The email address is not valid.';
+    case 'auth/operation-not-allowed':
+      return 'Email/password sign-in is not enabled for this project. In Firebase Console, open Authentication → Sign-in method and enable Email/Password.';
+    case 'auth/invalid-api-key':
+      return 'Invalid Firebase API key. Check your .env VITE_FIREBASE_* values match the web app in Project settings.';
     default:
       return 'An unexpected error occurred. Please try again.';
   }
