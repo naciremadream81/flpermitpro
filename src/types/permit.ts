@@ -30,6 +30,8 @@ export interface OcrResult {
 export type DocumentType = 'site-plan' | 'blocking-chart' | 'deed' | 'data-plate'
   | 'elevation-cert' | 'noc' | 'floor-plan' | 'other' | 'signed-pdf';
 
+export type DocumentApprovalStatus = 'pending' | 'approved' | 'rejected';
+
 export interface PermitDocument {
   id: string;
   fileName: string;
@@ -40,6 +42,11 @@ export interface PermitDocument {
   ocrResult: OcrResult | null;
   /** When this PDF was created by stamping a signature onto another document */
   derivedFromDocumentId?: string;
+  /** Approval workflow */
+  approvalStatus?: DocumentApprovalStatus;
+  approvedAt?: Date;
+  approvedBy?: string;
+  approvalNotes?: string;
 }
 
 export interface PermitPacket {
@@ -99,4 +106,9 @@ export interface ChecklistItemState {
   completed: boolean;
   completedAt: Date | null;
   notes: string;
+  /** Override/waiver fields */
+  waived?: boolean;
+  waivedAt?: Date | null;
+  waivedBy?: string;
+  waivedReason?: string;
 }
